@@ -50,9 +50,9 @@ void blink(void *args) {
     }
 }
 
-ImageAvatarLite::ImageAvatarLite(fs::FS& json_fs, fs::FS& bmp_fs) {
+ImageAvatarLite::ImageAvatarLite(fs::FS& yaml_fs, fs::FS& bmp_fs) {
     _expression = 0;
-    _json_fs = &json_fs;
+    _yaml_fs = &yaml_fs;
     _bmp_fs = &bmp_fs;
 }
 ImageAvatarLite::~ImageAvatarLite(void) {

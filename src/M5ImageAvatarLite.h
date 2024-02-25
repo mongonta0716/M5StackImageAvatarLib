@@ -46,7 +46,7 @@ class ImageAvatarLite
 
     public:
         // ImageAvatarLite(void);
-        ImageAvatarLite(fs::FS& json_fs, fs::FS& bmp_fs);
+        ImageAvatarLite(fs::FS& yaml_fs, fs::FS& bmp_fs);
         ~ImageAvatarLite(void);
 
         void start();
