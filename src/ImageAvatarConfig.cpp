@@ -13,7 +13,7 @@ void ImageAvatarConfig::loadConfig(fs::FS& fs, const char *yaml_filename) {
     int res = file.available();
     Serial.printf("file:available:%d\n", res);
     DynamicJsonDocument doc(4096);
-    auto error = deserializeYaml(doc, file);
+    auto error = deserializeYml(doc, file);
     if (error) {
         Serial.printf("yaml file read error: %s", yaml_filename);
     }
