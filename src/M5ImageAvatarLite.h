@@ -26,7 +26,7 @@ class ImageAvatarLite
         uint8_t _expression;    // 感情
         uint32_t _draw_time;
 
-        fs::FS *_json_fs;   // 設定ファイルの収納場所(SD or SPIFFS)
+        fs::FS *_yaml_fs;   // 設定ファイルの収納場所(SD or SPIFFS)
         fs::FS *_bmp_fs;    // ビットマップファイルの収納場所（SD or SPIFFS）
         const char* _filename;
         ImageAvatarConfig _config;

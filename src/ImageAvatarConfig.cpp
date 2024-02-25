@@ -45,12 +45,9 @@ void ImageAvatarConfig::setCommonParameters(DynamicJsonDocument doc) {
     _spcommon.swap_bytes = sprite_info["swap_bytes"];
 
     JsonObject color_info = doc["color_info"];
-    const char* char_temp = color_info["skin"];
-    sscanf(char_temp, "%x", &_spcommon.colors.skin);
-    char_temp = color_info["eye_white"];
-    sscanf(char_temp, "%x", &_spcommon.colors.eye_white);
-    char_temp = color_info["transparent"];
-    sscanf(char_temp, "%x", &_spcommon.colors.transparent);
+    _spcommon.colors.skin = color_info["skin"];
+    _spcommon.colors.eye_white = color_info["eye_white"];
+    _spcommon.colors.transparent = color_info["transparent"];
 
    
 }
