@@ -338,4 +338,14 @@ uint8_t ImageAvatarLite::getExpressionMax() {
     return _config.getExpressionMax();
 }
 
+
+void ImageAvatarLite::suspend() {
+    vTaskSuspend(blinkTaskHandle);
+    vTaskSuspend(drawTaskHandle);
+}
+
+void ImageAvatarLite::resume() {
+    vTaskResume(drawTaskHandle);
+    vTaskResume(blinkTaskHandle);
+
 } // namespace m5imageavatar

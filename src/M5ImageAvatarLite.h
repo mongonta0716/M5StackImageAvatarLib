@@ -62,6 +62,8 @@ class ImageAvatarLite
         void setBlink(float ratio, bool isRight);
         void setAngle(float angle);
         void setMouthOpen(float ratio);
+        void suspend();
+        void resume();
 
         float getMouthOpen();
         move_param_s getMoveParameter();
