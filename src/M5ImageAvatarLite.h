@@ -5,6 +5,8 @@
 
 namespace m5imageavatar {
 
+enum Expression { Happy, Angry, Sad, Doubt, Sleepy, Neutral };
+
 #define DEFAULT_STACK_SIZE 2048
 
 class ImageAvatarLite
@@ -57,11 +59,13 @@ class ImageAvatarLite
         void changeAvatar(const char* filename, uint8_t expression = 0);
         void setMoveParameter(move_param_s mv);
         void setExpression(const char* filename, uint8_t expression);
+        void setExpression(uint8_t expression);
         void setBreath(float f);
         void setBlink(float ratio);
         void setBlink(float ratio, bool isRight);
         void setAngle(float angle);
         void setMouthOpen(float ratio);
+        void setMouthOpenRatio(float ratio);
         void suspend();
         void resume();
         void setSpeechText(const char *speechText);

@@ -330,8 +330,16 @@ void ImageAvatarLite::setExpression(const char* filename, uint8_t expression) {
     if (_expression == expression) return;
 }
 
+void ImageAvatarLite::setExpression(uint8_t expression) {
+    this->setExpression(_filename, expression);
+}
+
 void ImageAvatarLite::setMouthOpen(float ratio) {
     _mv.mouth_ratio = ratio;
+}
+
+void ImageAvatarLite::setMouthOpenRatio(float ratio) {
+    this->setMouthOpen(ratio);
 }
 
 uint8_t ImageAvatarLite::getExpressionMax() {
