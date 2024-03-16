@@ -3,6 +3,7 @@
 
 #include <FS.h>
 #include <M5Unified.h>
+#include <ArduinoJson.h>
 #include <ArduinoYaml.h>
 
 #define RIGHT true
