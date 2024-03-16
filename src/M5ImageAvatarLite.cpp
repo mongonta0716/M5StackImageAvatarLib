@@ -347,5 +347,11 @@ void ImageAvatarLite::suspend() {
 void ImageAvatarLite::resume() {
     vTaskResume(drawTaskHandle);
     vTaskResume(blinkTaskHandle);
+}
 
+void ImageAvatarLite::setSpeechText(const char* text) {
+}
+
+void ImageAvatarLite::setSpeechFont(const lgfx::IFont* font) {
+}
 } // namespace m5imageavatar

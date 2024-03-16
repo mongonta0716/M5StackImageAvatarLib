@@ -64,6 +64,9 @@ class ImageAvatarLite
         void setMouthOpen(float ratio);
         void suspend();
         void resume();
+        void setSpeechText(const char *speechText);
+        void setSpeechFont(const lgfx::IFont *speechFont);
+
 
         float getMouthOpen();
         move_param_s getMoveParameter();
