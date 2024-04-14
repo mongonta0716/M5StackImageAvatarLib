@@ -163,13 +163,14 @@ void ImageAvatarLite::initSprites(bool is_change) {
     _lcd_sp->setColorDepth(_spcommon.color_depth);
     _lcd_sp->setSwapBytes(_spcommon.swap_bytes);
     _lcd_sp->createSprite(_gfx->width(), _gfx->height());
+    _lcd_sp->setPivot(_gfx->width() / 2, _gfx->height() / 2);
 
 
 }
 
 void ImageAvatarLite::execDraw() {
     _gfx->startWrite();
-    _lcd_sp->pushSprite(_gfx, 0, 0);
+    _lcd_sp->pushRotated(_gfx, _mv.angle);
     _gfx->endWrite();
 }
 
@@ -386,5 +387,9 @@ void ImageAvatarLite::setSpeechText(const char* text) {
 }
 
 void ImageAvatarLite::setSpeechFont(const lgfx::IFont* font) {
+}
+
+void ImageAvatarLite::setAngle(float angle) {
+    _mv.angle = angle;
 }
 } // namespace m5imageavatar
