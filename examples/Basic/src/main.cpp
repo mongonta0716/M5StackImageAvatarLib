@@ -86,6 +86,7 @@ void setup() {
   avatar.init(&gfx, avatar_filename.c_str(), false, 0);
   avatar.start();
   last_power_check_time = millis();
+  M5.Speaker.tone(600, 100);
 
 }
 
@@ -104,65 +105,25 @@ void loop() {
 
 
   if (M5.BtnB.wasClicked()) {
-    size_t v = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
-    v += 10;
-    if (v <= 255) {
-      M5.Speaker.setVolume(v);
-      M5.Speaker.setChannelVolume(m5spk_virtual_channel, v);
-      Serial.printf("Volume: %d\n", v);
-      Serial.printf("SystemVolume: %d\n", M5.Speaker.getVolume());
-      M5.Speaker.tone(1000, 100);
-    }
+    // ウィンクします。
+    M5.Speaker.tone(3000, 100);
+    avatar.leftWink(true);
+    avatar.setAngle(10.0f);
+    delay(1000);
+    avatar.leftWink(false);
+    avatar.setAngle(0.0f);
   }
 
 
-  if (M5.BtnC.pressedFor(2000)) {
+  if (M5.BtnC.wasClicked()) {
+    // 表情を切り替え
     M5.Speaker.tone(1000, 100);
     delay(500);
     M5.Speaker.tone(600, 100);
-    // 表情を切り替え
     expression++;
-    Serial.printf("ExpressionMax:%d\n", avatar.getExpressionMax());
     if (expression >= avatar.getExpressionMax()) {
       expression = 0;
     }
-    Serial.printf("----------Expression: %d----------\n", expression);
     avatar.setExpression(system_config.getAvatarYamlFilename(avatar_count).c_str(), expression);
-    Serial.printf("Resume\n");
   }
-  if (M5.BtnC.wasClicked()) {
-    size_t v = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
-    v -= 10;
-    if (v > 0) {
-      M5.Speaker.setVolume(v);
-      M5.Speaker.setChannelVolume(m5spk_virtual_channel, v);
-      Serial.printf("Volume: %d\n", v);
-      Serial.printf("SystemVolume: %d\n", M5.Speaker.getVolume());
-      M5.Speaker.tone(800, 100);
-    }
-  }
-#ifndef ARDUINO_M5STACK_FIRE // FireはAxp192ではないのとI2Cが使えないので制御できません。
-  if ((millis()-last_power_check_time) > power_check_interval) {
-    if (M5.Power.Axp192.getACINVolatge() < 3.0f) {
-      // USBからの給電が停止したとき
-      // Serial.println("USBPowerUnPluged.");
-      M5.Power.setLed(0);
-      if ((auto_power_off_time > 0) and (last_discharge_time == 0)) {
-        M5.Speaker.tone(1000, 100);
-        delay(500);
-        M5.Speaker.tone(800, 100);
-        last_discharge_time = millis();
-      } else if ((auto_power_off_time > 0) and ((millis() - last_discharge_time) > auto_power_off_time)) {
-        M5.Power.powerOff();
-      }
-    } else {
-      //Serial.println("USBPowerPluged.");
-      M5.Power.setLed(80);
-      if (last_discharge_time > 0) {
-        last_discharge_time = 0;
-      }
-    }
-  }
-#endif
-  vTaskDelay(50);
 }

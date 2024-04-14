@@ -3,6 +3,7 @@
 
 #include <FS.h>
 #include <M5Unified.h>
+#include <ArduinoJson.h>
 #include <ArduinoYaml.h>
 
 #define RIGHT true
@@ -67,6 +68,8 @@ typedef struct MoveParam {
     float mouth_ratio;
     float angle;
     int breath;
+    bool is_left_wink;
+    bool is_right_wink;
 } move_param_s;
 
 class ImageAvatarConfig {

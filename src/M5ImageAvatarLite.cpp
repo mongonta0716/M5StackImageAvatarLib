@@ -35,18 +35,27 @@ void breath(void *args) {
 void blink(void *args) {
     DriveContext *ctx = reinterpret_cast<DriveContext *>(args);
     ImageAvatarLite *avatar = ctx->getAvatar();
+    uint32_t last_blink_millis = millis();
     for(;;) {
         // まぶたの動きをリアルにしたいのでfor文を使用
         for(float f=0.0; f<=1; f=f+0.1) {
             avatar->setBlink(f);
             delay(10/portTICK_PERIOD_MS);
         }
-        vTaskDelay(2000 + 100 * random(20));
+        while((millis() - last_blink_millis) < (2000 + 100 * random(20))) {
+            avatar->setBlink(1.0f);
+            delay(10/portTICK_PERIOD_MS);
+        }
+        last_blink_millis = millis();
         for(float f=1.0; f>=0; f=f-0.1) {
             avatar->setBlink(f);
             vTaskDelay(10/portTICK_PERIOD_MS);
         }
-        vTaskDelay(300 + 10 * random(20));
+        while((millis() - last_blink_millis) < (300 + 10 * random(20))) {
+            avatar->setBlink(0.0f);
+            delay(10/portTICK_PERIOD_MS);
+        }
+        last_blink_millis = millis();
     }
 }
 
@@ -154,13 +163,14 @@ void ImageAvatarLite::initSprites(bool is_change) {
     _lcd_sp->setColorDepth(_spcommon.color_depth);
     _lcd_sp->setSwapBytes(_spcommon.swap_bytes);
     _lcd_sp->createSprite(_gfx->width(), _gfx->height());
+    _lcd_sp->setPivot(_gfx->width() / 2, _gfx->height() / 2);
 
 
 }
 
 void ImageAvatarLite::execDraw() {
     _gfx->startWrite();
-    _lcd_sp->pushSprite(_gfx, 0, 0);
+    _lcd_sp->pushRotated(_gfx, _mv.angle);
     _gfx->endWrite();
 }
 
@@ -304,8 +314,16 @@ void ImageAvatarLite::setBreath(float f) {
     _mv.breath = f;
 }
 void ImageAvatarLite::setBlink(float ratio) {
-    setBlink(ratio, RIGHT);
-    setBlink(ratio, LEFT);
+    if (!_mv.is_right_wink) {
+        setBlink(ratio, RIGHT);
+    } else {
+        setBlink(0.0f, RIGHT);
+    }
+    if (!_mv.is_left_wink) {
+        setBlink(ratio, LEFT);
+    } else {
+        setBlink(0.0f, LEFT);
+    }
 }
 
 void ImageAvatarLite::setBlink(float ratio, bool is_right) {
@@ -314,6 +332,14 @@ void ImageAvatarLite::setBlink(float ratio, bool is_right) {
     } else {
         _mv.eye_l_ratio = ratio;
     }
+}
+
+void ImageAvatarLite::leftWink(bool isLeftWink) {
+    _mv.is_left_wink = isLeftWink;
+}
+
+void ImageAvatarLite::rightWink(bool isRightWink) {
+    _mv.is_right_wink = isRightWink;
 }
 
 void ImageAvatarLite::setExpression(const char* filename, uint8_t expression) {
@@ -330,12 +356,40 @@ void ImageAvatarLite::setExpression(const char* filename, uint8_t expression) {
     if (_expression == expression) return;
 }
 
+void ImageAvatarLite::setExpression(uint8_t expression) {
+    this->setExpression(_filename, expression);
+}
+
 void ImageAvatarLite::setMouthOpen(float ratio) {
     _mv.mouth_ratio = ratio;
+}
+
+void ImageAvatarLite::setMouthOpenRatio(float ratio) {
+    this->setMouthOpen(ratio);
 }
 
 uint8_t ImageAvatarLite::getExpressionMax() {
     return _config.getExpressionMax();
 }
 
+
+void ImageAvatarLite::suspend() {
+    vTaskSuspend(blinkTaskHandle);
+    vTaskSuspend(drawTaskHandle);
+}
+
+void ImageAvatarLite::resume() {
+    vTaskResume(drawTaskHandle);
+    vTaskResume(blinkTaskHandle);
+}
+
+void ImageAvatarLite::setSpeechText(const char* text) {
+}
+
+void ImageAvatarLite::setSpeechFont(const lgfx::IFont* font) {
+}
+
+void ImageAvatarLite::setAngle(float angle) {
+    _mv.angle = angle;
+}
 } // namespace m5imageavatar
