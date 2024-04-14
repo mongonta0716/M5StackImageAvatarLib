@@ -63,6 +63,8 @@ class ImageAvatarLite
         void setBreath(float f);
         void setBlink(float ratio);
         void setBlink(float ratio, bool isRight);
+        void leftWink(bool isLeftWink);
+        void rightWink(bool isRightWink);
         void setAngle(float angle);
         void setMouthOpen(float ratio);
         void setMouthOpenRatio(float ratio);

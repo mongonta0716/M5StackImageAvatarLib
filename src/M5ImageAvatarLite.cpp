@@ -310,10 +310,26 @@ void ImageAvatarLite::setBlink(float ratio) {
 
 void ImageAvatarLite::setBlink(float ratio, bool is_right) {
     if (is_right) {
-        _mv.eye_r_ratio = ratio;
+        if (!_mv.if_right_wink) {
+            _mv.eye_r_ratio = ratio;
+        } else {
+            _mv_eye_r_ratio = 0.0f;
+        } 
     } else {
-        _mv.eye_l_ratio = ratio;
+        if (!_mv.is_left_wink) {
+            _mv.eye_l_ratio = ratio;
+        } else {
+            _mv.eye_l_ratio = 0.0f;
+        }
     }
+}
+
+void ImageAvatarLite::leftWink(bool isLeftWink) {
+    _mv.is_left_wink = isLeftWink;
+}
+
+void ImageAvatarLite::rightWink(bool rightWink) {
+    _mv.is_right_wink = isRightWink;
 }
 
 void ImageAvatarLite::setExpression(const char* filename, uint8_t expression) {
