@@ -35,18 +35,27 @@ void breath(void *args) {
 void blink(void *args) {
     DriveContext *ctx = reinterpret_cast<DriveContext *>(args);
     ImageAvatarLite *avatar = ctx->getAvatar();
+    uint32_t last_blink_millis = millis();
     for(;;) {
         // まぶたの動きをリアルにしたいのでfor文を使用
         for(float f=0.0; f<=1; f=f+0.1) {
             avatar->setBlink(f);
             delay(10/portTICK_PERIOD_MS);
         }
-        vTaskDelay(2000 + 100 * random(20));
+        while((millis() - last_blink_millis) < (2000 + 100 * random(20))) {
+            avatar->setBlink(1.0f);
+            delay(10/portTICK_PERIOD_MS);
+        }
+        last_blink_millis = millis();
         for(float f=1.0; f>=0; f=f-0.1) {
             avatar->setBlink(f);
             vTaskDelay(10/portTICK_PERIOD_MS);
         }
-        vTaskDelay(300 + 10 * random(20));
+        while((millis() - last_blink_millis) < (300 + 10 * random(20))) {
+            avatar->setBlink(0.0f);
+            delay(10/portTICK_PERIOD_MS);
+        }
+        last_blink_millis = millis();
     }
 }
 
@@ -304,23 +313,23 @@ void ImageAvatarLite::setBreath(float f) {
     _mv.breath = f;
 }
 void ImageAvatarLite::setBlink(float ratio) {
-    setBlink(ratio, RIGHT);
-    setBlink(ratio, LEFT);
+    if (!_mv.is_right_wink) {
+        setBlink(ratio, RIGHT);
+    } else {
+        setBlink(0.0f, RIGHT);
+    }
+    if (!_mv.is_left_wink) {
+        setBlink(ratio, LEFT);
+    } else {
+        setBlink(0.0f, LEFT);
+    }
 }
 
 void ImageAvatarLite::setBlink(float ratio, bool is_right) {
     if (is_right) {
-        if (!_mv.if_right_wink) {
-            _mv.eye_r_ratio = ratio;
-        } else {
-            _mv_eye_r_ratio = 0.0f;
-        } 
+        _mv.eye_r_ratio = ratio;
     } else {
-        if (!_mv.is_left_wink) {
-            _mv.eye_l_ratio = ratio;
-        } else {
-            _mv.eye_l_ratio = 0.0f;
-        }
+        _mv.eye_l_ratio = ratio;
     }
 }
 
@@ -328,7 +337,7 @@ void ImageAvatarLite::leftWink(bool isLeftWink) {
     _mv.is_left_wink = isLeftWink;
 }
 
-void ImageAvatarLite::rightWink(bool rightWink) {
+void ImageAvatarLite::rightWink(bool isRightWink) {
     _mv.is_right_wink = isRightWink;
 }
 
