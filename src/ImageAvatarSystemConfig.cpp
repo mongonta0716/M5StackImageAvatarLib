@@ -48,7 +48,9 @@ void ImageAvatarSystemConfig::setSystemConfig(DynamicJsonDocument doc) {
     _servo_yamlfile = doc["servo_yaml"].as<String>(); 
     _servo_random_mode = doc["servo_random_mode"];
     _auto_power_off_time = doc["auto_power_off_time"];
-    _led_lr = doc["led_lr"];
+    _led_lr = doc["audio_led_lr"];
+    _takao_base = doc["use_takao_base"];
+    _avatar_swing_interval = doc{"mic_swing_interval"};
 }
 
 void ImageAvatarSystemConfig::printAllParameters() {
