@@ -261,15 +261,15 @@ void ImageAvatarLite::drawTest() {
     execDraw();
 }
 
-void ImageAvatarLite::addTask(TaskFunction_t f, const char* task_name, uint8_t task_priority, uint16_t stack_size) {
+void ImageAvatarLite::addTask(TaskFunction_t f, const char* task_name, uint8_t task_priority, uint16_t stack_size, TaskHandle_t* const task_handle, const BaseType_t core_id) {
     DriveContext * ctx = new DriveContext(this);
     xTaskCreateUniversal(f,
                          task_name,
                          stack_size,
                          ctx,
                          task_priority,
-                         NULL,
-                         APP_CPU_NUM);
+                         task_handle,
+                         core_id);
 }
 
 void ImageAvatarLite::start() {
@@ -390,6 +390,9 @@ void ImageAvatarLite::setSpeechFont(const lgfx::IFont* font) {
 }
 
 void ImageAvatarLite::setAngle(float angle) {
+    _mv.angle = angle;
+}
+void ImageAvatarLite::setRotation(float angle) {
     _mv.angle = angle;
 }
 } // namespace m5imageavatar

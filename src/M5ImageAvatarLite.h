@@ -52,7 +52,12 @@ class ImageAvatarLite
         ~ImageAvatarLite(void);
 
         void start();
-        void addTask(TaskFunction_t f, const char* name, uint8_t task_priority = 6, uint16_t stack_size = DEFAULT_STACK_SIZE);
+        void addTask(TaskFunction_t f
+                    , const char* name
+                    , uint8_t task_priority = 6
+                    , uint16_t stack_size = DEFAULT_STACK_SIZE
+                    , TaskHandle_t* const task_handle=NULL
+                    , const BaseType_t core_id=APP_CPU_NUM);
         void createSprite();
         void init(M5GFX *gfx, const char* filename, bool is_change, uint8_t expression = 0);
         void drawAll();
@@ -66,6 +71,7 @@ class ImageAvatarLite
         void leftWink(bool isLeftWink);
         void rightWink(bool isRightWink);
         void setAngle(float angle);
+        void setRotation(float angle);
         void setMouthOpen(float ratio);
         void setMouthOpenRatio(float ratio);
         void suspend();
