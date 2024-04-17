@@ -3,21 +3,21 @@
 
 # 概要
 
-　あらかじめ用意した画像ファイル（BMP)とJSONファイルの設定を組み合わせてAvatarを作成できるアプリです。
+　あらかじめ用意した画像ファイル（BMP)とYAMLファイルの設定を組み合わせてAvatarを作成できるライブラリです。
 [![M5Core2ImageAvatarLite](https://img.youtube.com/vi/gR_Rzfq-Dh8/0.jpg)](https://www.youtube.com/watch?v=gR_Rzfq-Dh8)
 # 開発環境
-- VSCode(Ver.1.55.1)
+- VSCode
 - PlatformIO
 
 ## ArduinoIDEで使用する場合
-srcフォルダとmain.cppの名前を揃えて変更してください。
+examplesのフォルダ内にあるsrcフォルダとmain.cppの名前を揃えて変更してください。
 
 ### 変更例
 src -> M5Core2ImageAvatarLite<br>
 main.cpp -> M5Core2ImageAvatarLite.ino
 
 # 必要なライブラリ
-<b>Arduino-esp32はVer.2.0.3で動作確認しています。</b>
+<b>詳細各exampleのplatformio.iniを参照してください。</b>
 
 バージョンについては[platformio.ini](platformio.ini)を見てください。
 - [M5Unified](https://github.com/m5stack/M5Unified)
@@ -31,28 +31,42 @@ main.cpp -> M5Core2ImageAvatarLite.ino
 - [FastLED](https://github.com/FastLED/FastLED)
 
 # 対応機種
- メモリの都合上PSRAMが必要なのでM5Stack Core2とM5Stack Fireのみを対象にしています。
+ メモリの都合上PSRAMが必要なので下記の3機種を対象にしています。
  4bitBMPを使用し、カラーパレットを使用することにより他の機種でも動きますが手順が複雑なのでCore2及びFireのみとします。
 
-# 使い方
-1. SDカードのルートにdataにあるフォルダ(bmp,json)をコピー
-1. jsonフォルダの下記の2ファイルを設定します。
-    - M5AvatarLiteSystem.json
-    - M5AvatarLiteServo.json
-1. プログラムを書き込むとAvatarが起動します。
-1. Bluetoothスピーカーとして機能します。「ESP32」というデバイスをペアリングすると音を再生可能です。
+- M5Stack CoreS3
+- M5Stack Core2 / Core2 for AWS
+- M5Stack Fire
 
-## ボタン操作
+# 使い方
+1. SDカードのルートにdataにあるフォルダ(bmp,yamlをコピー
+1. jsonフォルダの下記の2ファイルを設定します。
+    - M5AvatarLiteSystem.yaml
+    - M5AvatarLiteServo.yaml
+1. プログラムを書き込むとAvatarが起動します。
+
+# Examples
+
+## Basic
+ImageAvatarを表示するサンプルです。
+
+### ボタン操作
 
 - ボタンA
     - クリック<br>アバターの切り替え
-    - 長押し<br>サーボテスト
 - ボタンB
-    - クリック<br>ボリュームアップ
-    - 長押し<br>サーボ駆動のON/OFF切り替え
+    - クリック<br>ウィンクします。
 - ボタンC
-    - クリック<br>ボリュームダウン
-    - 長押し<br>アバターの表情切り替え
+    - クリック<br>アバターの表情切り替え
+
+## Mic
+- ボタンA
+    - クリック<br>アバターの切り替え
+- ボタンB
+    - クリック<br>ウィンクします。
+- ボタンC
+    - クリック<br>アバターの表情切り替え
+
 
 ## SDカード上に必要なファイル
 
@@ -60,46 +74,37 @@ dataフォルダ内にあるファイル及びフォルダをSDカードのル�
  
  1. - /bmp_slime/<br>BMPファイル(サンプルのbmp_slimeでは全部で11ファイル)
     - /bmp_puipui/<br>
-    - /bmp_jacko/<br>
- 1. /json/<br>
-    - M5AvatarLiteSystem.json<br>一番最初に読み込まれる設定ファイル
-    - M5AvatarLite00.json<br>slimeの設定ファイル
-    - M5AvatarLite01.json<br>puipuiの設定ファイル
-    - M5AvatarLite02.json<br>jackolanternの設定ファイル
-    - M5AvatarLiteServo.json(※サーボを使う場合)
+ 1. /yaml/<br>
+    - M5AvatarLiteSystem.yaml<br>一番最初に読み込まれる設定ファイル
+    - M5AvatarLite00slime.yaml<br>slimeの設定ファイル
+    - M5AvatarLite01puipui.yaml<br>puipuiの設定ファイル
 
-# JSONファイルとBMPファイルの置き場所について
+# yamlファイルとBMPファイルの置き場所について
  main.cppの下記の行を変更するとJSONファイルとBMPファイルの収納場所をSDかSPIFFSか指定できます。SPIFFSに置くと開発するときにVSCodeからUploadできるようになり、SDカードを抜き差しして書き換える手間が省けます。
 ```
-fs::FS json_fs = SD; // JSONファイルの収納場所(SPIFFS or SD)
+fs::FS yaml_fs = SD; // yamlファイルの収納場所(SPIFFS or SD)
 fs::FS bmp_fs  = SD; // BMPファイルの収納場所(SPIFFS or SD)
 ```
  ## VSCodeからのデータUpload方法（英語）
  [ESP32 with VS Code and PlatformIO: Upload Files to Filesystem (SPIFFS)](https://randomnerdtutorials.com/esp32-vs-code-platformio-spiffs/)
 
-# M5AvatarLiteSystem.jsonの内容
-一番最初に読み込まれる設定ファイルです。サンプルでは3つまで定義してあります。（最大8つ）
+# M5AvatarLiteSystem.yamlの内容
+一番最初に読み込まれる設定ファイルです。サンプルではAvatarは2つ定義してあります。（最大20）
 ```
-{
-    "volume" : 100,                                // 起動時のボリューム
-    "lcd_brightness" : 50,                         // LCDの明るさ
-    "avatar_json": {
-        "filename" : [
-            "/json/M5AvatarLite00.json",           // countで設定した数に対応するAvatar定義を作成
-            "/json/M5AvatarLite01.json",
-            "/json/M5AvatarLite02.json"            // 3つ以上増やすときは末尾に「,」を追加
-            // .... ,
-            // .
-            // "/json/M5AvatarLite07.json"         // 最大8まで
-        ]
-    },
-    "bluetooth_device_name" : "ESP32",                   // Bluetoothスピーカーのデバイス名
-    "bluetooth_reconnect" : false,                       // 起動時にBluetoothを再接続するかどうか（接続先が変わる場合はfalse推奨）
-    "servo_json" : "/json/M5AvatarLiteServo.json",       // サーボの設定ファイル
-    "servo_random_mode" : true,                          // 起動時にサーボを動かすかどうか
-    "auto_power_off_time" : 0,                           // USBからの電源供給が止まった後にCore2の電源を切るまでの時間（0は電源OFFしません。）
-     "led_lr"                                             // GoBottomのLEDBarをステレオで表示するかの切り替え（0:Stereo, 1:LeftOnly, 2:RightOnly）
-}
+---
+lcd_brightness: 150                        // 液晶の明るさ(0〜255)
+avatar_yaml:                               // ImageAvatarのyamlファイルを記述(Max:20) 
+- "/yaml/M5AvatarLite00slime.yaml"
+- "/yaml/M5AvatarLite01puipui.yaml"
+auto_power_off_time: "0"                   // 電源供給が止まると自動的にOFFにする時間(msec) 0だと無効です。
+// ---------- 以下はアプリで利用するパラメータです。----------
+volume: 200                                // ボリューム(0〜255)
+bluetooth_device_name: "ESP32"             // Bluetoothスピーカー用 
+bluetooth_reconnect: "false"               // Bluetoothスピーカー用
+audio_led_lr: "0"                          // Bluetoothスピーカー用GoBottomを利用する際の光り方。 0:stereo, 1:left_only, 2:right_only
+servo_random_mode: "true"                  // Stackchanのサーボ用
+use_takao_base : "false";                  // Stack-chan_Takao_Baseを使用して後ろ給電を使用する場合はtrueにしてください。
+mic_swing_interval : 0;                    // MicのExampleで設定した間隔(msec)で左右に揺れます。0は無効。
 ```
 
  # カスタマイズ方法
@@ -119,210 +124,140 @@ fs::FS bmp_fs  = SD; // BMPファイルの収納場所(SPIFFS or SD)
 
 目と口の透明化したい部分は透明色(M5AvatarLiteConfig.json)で塗りつぶします。サンプルでは緑（0x00FF00）になっています。
 
-## JSONファイルの編集
-下記を参考にして、JSONファイルを書き換えてください。
+## yamlファイルの編集
+下記を参考にして、yamlファイルを書き換えてください。
 ``` 
-{
-    "expression": [  // 表情（デフォルトは最大8パターンまで）
-        "normal",
-        "sad",
-        "angry"
-    ],
-
-    "sprite_info": {
-        "psram": "true",      // PSRAMの仕様有無（8bit以上ではtrueのまま）
-        "color_depth": 16,    // 使用するBMPのカラー(4,8,16)
-        "swap_bytes": 0
-    },
-    "color_info": {
-        "skin"  : "0xFF5B00",             // 未使用
-        "eye_white" : "0xFFFFFF",         // 未使用
-        "transparent"    : "0x00FF00",    // 透明色
-    },
-    "fixed_parts": [
-        {
-            "parts": "head",
-            "x": -10,                             // 頭部パーツの開始X座標
-            "y": -10,                             // 頭部パーツの開始y座標
-            "w": 340,                             // 頭部パーツの幅
-            "h": 260,                             // 頭部パーツの高さ
-            "filename": "/bmp_slime/head.bmp"        // 頭部パーツのファイル名
-        }
-    ],
-    "mouth": [                                    // 口のパーツ設定
-        {
-            "normal": {     // 表情"normal"の口設定
-                "x": 160,   // 口パーツの開始x座標
-                "y": 200,   // 口パーツの開始y座標
-                "w": 60,    // 口パーツの幅
-                "h": 60,    // 口パーツの高さ
-                "filename": {
-                    "open": "/bmp_slime/mouth_op_normal.bmp",  // 開いた口
-                    "close": "/bmp_slime/mouth_cl_normal.bmp"  // 閉じた口
-                },
-                "minScaleX": 1.0,     // 未使用
-                "maxScaleX": 1.0,     // 未使用
-                "minScaleY": 0.3,     // Y軸の拡大率がこれより小さくなると閉じる
-                "maxScaleY": 1.0      // 未使用
-            }
-        },
-        {
-            "sad": {                              // 表情"sad"の口設定
-                "x": 160,
-                "y": 200,
-                "w": 60,
-                "h": 60,
-                "filename": {
-                    "open": "/bmp_slime/mouth_op_sad.bmp",
-                    "close": "/bmp_slime/mouth_cl_normal.bmp"
-                },
-                "minScaleX": 1.0,
-                "maxScaleX": 1.0,
-                "minScaleY": 0.3,
-                "maxScaleY": 1.0
-            }
-        },
-        {
-            "angry": {                            // 表情"angry"の口設定
-                "x": 160,
-                "y": 200,
-                "w": 60,
-                "h": 60,
-                "filename": {
-                    "open": "/bmp_slime/mouth_op_angry.bmp",
-                    "close": "/bmp_slime/mouth_cl_normal.bmp"
-                },
-                "minScaleX": 1.0,
-                "maxScaleX": 1.0,
-                "minScaleY": 0.3,
-                "maxScaleY": 1.0
-            }
-        }
-    ],
-    "eye": [ // -------------------------------- 目の設定
-        {
-            "normal": {        // 表情"normal"の目設定
-                "rx": 120,     //       右目開始X座標
-                "ry": 100,     //       右目開始Y座標
-                "lx": 200,     //       左目開始X座標
-                "ly": 100,     //       左目開始Y座標
-                "w": 40,       //       目の幅
-                "h": 60,       //       目の高さ      
-                "filename": {
-                    "open": "/bmp_slime/eye_op_normal.bmp", // 開いた目のファイル名
-                    "close": "/bmp_slime/eye_cl_normal.bmp" // 閉じた目のファイル名
-                },
-                "minScaleX": 1.0,     // 未使用
-                "maxScaleX": 1.0,     // 未使用
-                "minScaleY": 0.3,     // 拡大倍率がこれより小さくなると閉じる
-                "maxScaleY": 1.0,     // 未使用
-                "invert"   : true     // 左目表示の際に反転するかどうかを指定(true: 反転する。false: 反転しない)
-            }
-        },
-        {
-            "sad": {           // 表情"sad"の目設定
-                "rx": 120,
-                "ry": 100,
-                "lx": 200,
-                "ly": 100,
-                "w": 40,
-                "h": 60,
-                "filename": {
-                    "open": "/bmp_slime/eye_op_sad.bmp",
-                    "close": "/bmp_slime/eye_cl_sad.bmp"
-                },
-                "minScaleX": 1.0,
-                "maxScaleX": 1.0,
-                "minScaleY": 0.3,
-                "maxScaleY": 1.0,
-                "invert"   : false
-            }
-        },
-        {
-            "angry": {         // 表情"angry"の目設定
-                "rx": 120,
-                "ry": 100,
-                "lx": 200,
-                "ly": 100,
-                "w": 40,
-                "h": 60,
-                "filename": {
-                    "open": "/bmp_slime/eye_op_angry.bmp",
-                    "close": "/bmp_slime/eye_cl_angry.bmp"
-                },
-                "minScaleX": 1.0,
-                "maxScaleX": 1.0,
-                "minScaleY": 0.3,
-                "maxScaleY": 1.0,
-                "invert"   : true
-            }
-        }
-    ],
-    "init_param": [                   // 初期設定（特に変更は必要ないですが表情の数必要です。）
-        {
-            "normal": {
-                "eye_l_ratio": 0.0,  // 左目を開く倍率
-                "eye_r_ratio": 0.0,  // 右目を開く倍率
-                "mouth_ratio": 0.0,  // 口を開く倍率
-                "angle": 0.0,        // Avatarの角度
-                "breath": 0          // Avatarが息使いする高さ
-            }
-        },
-        {
-            "sad": {
-                "eye_l_ratio": 0.0,
-                "eye_r_ratio": 0.0,
-                "mouth_ratio": 0.0,
-                "angle": 0.0,
-                "breath": 0
-            }
-        },
-        {
-            "angry": {
-                "eye_l_ratio": 0.0,
-                "eye_r_ratio": 0.0,
-                "mouth_ratio": 0.0,
-                "angle": 0.0,
-                "breath": 0
-            }
-        }
-    ]
-}
-```
-
-
-
-# サーボについて
-main.cpp冒頭の#define USE_SERVOのコメントを外すとサーボを利用できます。2021/11現在では[ｽﾀｯｸﾁｬﾝ](https://github.com/meganetaaan/stack-chan)での利用を想定しています。
-
-## サーボの初期設定
-X軸とY軸の2軸（ｽﾀｯｸﾁｬﾝのパン(x)とチルト(y)）で利用できます。/json/フォルダにM5AvatarLiteServo.jsonを置いてください。
-
-[![M5Core2ImageAvatarLite](https://img.youtube.com/vi/07fEke_r3Xc/0.jpg)](https://www.youtube.com/watch?v=07fEke_r3Xc)
-
-
-## M5AvatarLiteServoConfig.jsonの内容
-```
-{
-    "initial_settings": {
-        "x_axis": {            // パン
-            "pin"    : 13,     // 水平方向のサーボピン番号
-            "center" : 85,     // サーボの中心（初期位置）
-            "lower"  : 0,      // サーボの下限角度
-            "uppder"  : 180,   // サーボの上限角度
-            "offset" : 0       // サーボのオフセット
-        },
-        "y_axis": {            // チルト
-            "pin"    : 14,     // 垂直方向のサーボ品番号
-            "center" : 60,     // サーボの中心(初期位置)
-            "lower"  : 30,     // サーボの下限角度
-            "upper"  : 90,     // サーボの上限角度
-            "offset" : 0       // サーボのオフセット
-        }
-
-    },
-    "servo_enable" : "false"   // 起動時にサーボを動かすかどうかのフラグ（未使用）
-}
+---
+expression:
+- "normal"
+- "sad"
+- "angry"
+sprite_info: 
+  psram: "true"
+  color_depth: "16"
+  swap_bytes: "0"
+color_info: 
+  skin: "0xFF5B00"
+  eye_white: "0xFFFFFF"
+  transparent: "0x00FF00"
+fixed_parts: 
+- parts: "body"
+  x: "0"
+  y: "0"
+  w: "320"
+  h: "240"
+  filename: "/bmp_slime/head.bmp"
+mouth: 
+-
+  normal: 
+    x: "160"
+    y: "210"
+    w: "60"
+    h: "60"
+    filename: 
+      open: "/bmp_slime/mouth_op_normal.bmp"
+      close: "/bmp_slime/mouth_cl_normal.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+-
+  sad: 
+    x: "160"
+    y: "200"
+    w: "60"
+    h: "60"
+    filename: 
+      open: "/bmp_slime/mouth_op_sad.bmp"
+      close: "/bmp_slime/mouth_cl_normal.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+-
+  angry: 
+    x: "160"
+    y: "200"
+    w: "60"
+    h: "60"
+    filename: 
+      open: "/bmp_slime/mouth_op_angry.bmp"
+      close: "/bmp_slime/mouth_cl_normal.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+eye: 
+-
+  normal: 
+    rx: "130"
+    ry: "120"
+    lx: "190"
+    ly: "120"
+    w: "40"
+    h: "60"
+    filename: 
+      open: "/bmp_slime/eye_op_normal.bmp"
+      close: "/bmp_slime/eye_cl_normal.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+    invert: "true"
+-
+  sad: 
+    rx: "120"
+    ry: "100"
+    lx: "200"
+    ly: "100"
+    w: "40"
+    h: "60"
+    filename: 
+      open: "/bmp_slime/eye_op_sad.bmp"
+      close: "/bmp_slime/eye_cl_sad.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+    invert: "true"
+-
+  angry: 
+    rx: "120"
+    ry: "100"
+    lx: "200"
+    ly: "100"
+    w: "40"
+    h: "60"
+    filename: 
+      open: "/bmp_slime/eye_op_angry.bmp"
+      close: "/bmp_slime/eye_cl_angry.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+    invert: "true"
+init_param: 
+-
+  normal: 
+    eye_l_ratio: "0"
+    eye_r_ratio: "0"
+    mouth_ratio: "0"
+    angle: "0"
+    breath: "0"
+-
+  sad: 
+    eye_l_ratio: "0"
+    eye_r_ratio: "0"
+    mouth_ratio: "0"
+    angle: "0"
+    breath: "0"
+-
+  angry: 
+    eye_l_ratio: "0"
+    eye_r_ratio: "0"
+    mouth_ratio: "0"
+    angle: "0"
+    breath: "0"
 ```
 
 # 参考にしたリポジトリ
