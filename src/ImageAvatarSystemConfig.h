@@ -40,7 +40,7 @@ class ImageAvatarSystemConfig {
         uint32_t getAutoPowerOffTime() { return _auto_power_off_time; }
         uint8_t getLedLR() { return _led_lr; }
         bool getTakaoBase() { return _takao_base; }
-        uint32_t getAvatarSwingInterval() { return _avatar_swing_interval; };
+        uint32_t getAvatarSwingInterval() { return _avatar_swing_interval; }
 }
 
 #endif // _IMAGEAVATAR_SERVO_CONFIG_

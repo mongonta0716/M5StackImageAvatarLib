@@ -50,7 +50,7 @@ void ImageAvatarSystemConfig::setSystemConfig(DynamicJsonDocument doc) {
     _auto_power_off_time = doc["auto_power_off_time"];
     _led_lr = doc["audio_led_lr"];
     _takao_base = doc["use_takao_base"];
-    _avatar_swing_interval = doc{"mic_swing_interval"};
+    _avatar_swing_interval = doc["mic_swing_interval"];
 }
 
 void ImageAvatarSystemConfig::printAllParameters() {
