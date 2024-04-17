@@ -16,6 +16,11 @@
 #include "fft.hpp"
 #include <cinttypes>
 
+#if defined(ARDUINO_M5STACK_CORES3)
+  #include <gob_unifiedButton.hpp>
+  goblib::UnifiedButton unifiedButton;
+#endif
+
 
 M5GFX &gfx( M5.Lcd ); // aliasing is better than spawning two instances of LGFX
 
@@ -124,6 +129,9 @@ void setup() {
   cfg.internal_imu = false; // サーボの誤動作防止(Fireは21,22を使うので干渉するため)
 #endif
   M5.begin(cfg);
+#if defined( ARDUINO_M5STACK_CORES3 )
+  unifiedButton.begin(&M5.Display, goblib::UnifiedButton::appearance_t::transparent_all);
+#endif
 
   xMutex = xSemaphoreCreateMutex();
   SPIFFS.begin();
@@ -157,6 +165,10 @@ void setup() {
 
 void loop() {
   // SpeakerとMicは排他利用のため、Speaker.tone()の前後でMic.end(), Speaker.begin()とMic.begin()を実行しています。
+#if defined( ARDUINO_M5STACK_CORES3 )
+  unifiedButton.update();
+#endif
+
   M5.update();
   if (M5.BtnA.wasClicked()) {
     // アバターを変更します。

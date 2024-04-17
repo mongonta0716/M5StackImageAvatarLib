@@ -14,6 +14,11 @@
 #include "ImageAvatarSystemConfig.h" 
 
 
+#if defined(ARDUINO_M5STACK_CORES3)
+  #include <gob_unifiedButton.hpp>
+  goblib::UnifiedButton unifiedButton;
+#endif
+
 M5GFX &gfx( M5.Lcd ); // aliasing is better than spawning two instances of LGFX
 
 // YAMLファイルとBMPファイルを置く場所を切り替え
@@ -65,7 +70,9 @@ void setup() {
   cfg.internal_imu = false; // サーボの誤動作防止(Fireは21,22を使うので干渉するため)
 #endif
   M5.begin(cfg);
-
+#if defined( ARDUINO_M5STACK_CORES3 )
+  unifiedButton.begin(&M5.Display, goblib::UnifiedButton::appearance_t::transparent_all);
+#endif
   xMutex = xSemaphoreCreateMutex();
   SPIFFS.begin();
   SD.begin(GPIO_NUM_4, SPI, 25000000);
@@ -91,6 +98,9 @@ void setup() {
 }
 
 void loop() {
+#if defined( ARDUINO_M5STACK_CORES3 )
+  unifiedButton.update();
+#endif
   M5.update();
   if (M5.BtnA.wasClicked()) {
     // アバターを変更します。
