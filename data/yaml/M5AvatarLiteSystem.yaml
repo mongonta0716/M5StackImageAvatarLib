@@ -1,14 +1,14 @@
 ---
-lcd_brightness: 150                        // 液晶の明るさ(0〜255)
-avatar_yaml:                               // ImageAvatarのJsonファイルを記述(Max:20) 
+lcd_brightness: 150                        # 液晶の明るさ(0〜255)
+avatar_yaml:                               # ImageAvatarのyamlファイルを記述(Max:20) 
 - "/yaml/M5AvatarLite00slime.yaml"
 - "/yaml/M5AvatarLite01puipui.yaml"
-auto_power_off_time: "0"                   // 電源供給が止まると自動的にOFFにする時間(msec) 0だと無効です。
-// ---------- 以下はアプリで利用するパラメータです。----------
-volume: 200                                // ボリューム(0〜255)
-bluetooth_device_name: "ESP32"             // Bluetoothスピーカー用 
-bluetooth_reconnect: "false"               // Bluetoothスピーカー用
-audio_led_lr: "0"                          // Bluetoothスピーカー用GoBottomを利用する際の光り方。 0:stereo, 1:left_only, 2:right_only
-servo_random_mode: "true"                  // Stackchanのサーボ用
-use_takao_base : "false";                  // Stack-chan_Takao_Baseを使用して後ろ給電を使用する場合はtrueにしてください。
-mic_swing_interval : 0;                    // MicのExampleで設定した間隔(msec)で左右に揺れます。0は無効。
+auto_power_off_time: "0"                   # 電源供給が止まると自動的にOFFにする時間(msec) 0だと無効です。
+# ---------- 以下はアプリで利用するパラメータです。----------
+volume: 200                                # ボリューム(0〜255)
+bluetooth_device_name: "ESP32"             # Bluetoothスピーカー用 
+bluetooth_reconnect: "false"               # Bluetoothスピーカー用
+audio_led_lr: "0"                          # Bluetoothスピーカー用GoBottomを利用する際の光り方。 0:stereo, 1:left_only, 2:right_only
+servo_random_mode: "true"                  # Stackchanのサーボ用
+use_takao_base : "false"                   # Stack-chan_Takao_Baseを使用して後ろ給電を使用する場合はtrueにしてください。
+mic_swing_interval : 0                     # MicのExampleで設定した間隔(msec)で左右に揺れます。0は無効。
