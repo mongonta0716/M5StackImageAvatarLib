@@ -49,31 +49,28 @@ SemaphoreHandle_t xMutex = NULL;
 /// set M5Speaker virtual channel (0-7)
 static constexpr uint8_t m5spk_virtual_channel = 0;
 
-#define USE_MIC
+// ---------- Mic sampling ----------
 
-#ifdef USE_MIC
-  // ---------- Mic sampling ----------
+#define READ_LEN    (2 * 256)
+#define LIPSYNC_LEVEL_MAX 10.0f
 
-  #define READ_LEN    (2 * 256)
-  #define LIPSYNC_LEVEL_MAX 10.0f
+int16_t *adcBuffer = NULL;
+static fft_t fft;
+static constexpr size_t WAVE_SIZE = 256 * 2;
 
-  int16_t *adcBuffer = NULL;
-  static fft_t fft;
-  static constexpr size_t WAVE_SIZE = 256 * 2;
+static constexpr const size_t record_samplerate = 16000; // M5StickCPlus2だと48KHzじゃないと動かない。(M5Unified 0.1.13で解消)
+static int16_t *rec_data;
 
-  static constexpr const size_t record_samplerate = 48000; // M5StickCPlus2だと48KHzじゃないと動かない。
-  static int16_t *rec_data;
-  
-  // setupの最初の方の機種判別で書き換えている場合があります。そちらもチェックしてください。（マイクの性能が異なるため）
-  uint8_t lipsync_shift_level = 11; // リップシンクのデータをどのくらい小さくするか設定。口の開き方が変わります。
-  float lipsync_max =LIPSYNC_LEVEL_MAX;  // リップシンクの単位ここを増減すると口の開き方が変わります。
+// setupの最初の方の機種判別で書き換えている場合があります。そちらもチェックしてください。（マイクの性能が異なるため）
+uint8_t lipsync_shift_level = 11; // リップシンクのデータをどのくらい小さくするか設定。口の開き方が変わります。
+float lipsync_max =LIPSYNC_LEVEL_MAX;  // リップシンクの単位ここを増減すると口の開き方が変わります。
 
-#endif
 
 
 // Start----- Task functions ----------
 
 void lipsync(void *args) {
+  uint8_t angle_count = 0;
   for (;;) { 
     size_t bytesread;
     uint64_t level = 0;
@@ -106,11 +103,13 @@ void lipsync(void *args) {
       }
       last_lipsync_max_msec = millis(); // 無音でない場合は更新
     }
-
-    if ((millis() - last_rotation_msec) > 350) {
-      int direction = random(-2, 2);
-      //avatar.setRotation(direction * 10 * ratio);
-      last_rotation_msec = millis();
+    if (system_config.getAvatarSwingInterval() > 0) {
+      if ((millis() - last_rotation_msec) > system_config.getAvatarSwingInterval()) {
+        float direction = 2 * sin(angle_count);
+        avatar.setRotation(direction * 10 * ratio);
+        last_rotation_msec = millis();
+        angle_count++;
+      }
     }
     avatar.setMouthOpenRatio(ratio);
   }
@@ -133,6 +132,7 @@ void setup() {
   system_config.loadConfig(yaml_fs, avatar_system_yaml);
   system_config.printAllParameters();
   M5.Speaker.setVolume(system_config.getVolume());
+  M5.Power.setExtOutput(!system_config.getTakaoBase());  // TakaoBaseの後ろ給電を使う場合、falseにしないとバッテリーが充電されない。
   M5_LOGI("SystemVolume: %d\n", M5.Speaker.getVolume());
   M5.Speaker.setChannelVolume(m5spk_virtual_channel, system_config.getVolume());
   M5_LOGI("ChannelVolume: %d\n", M5.Speaker.getChannelVolume(m5spk_virtual_channel));
@@ -151,11 +151,12 @@ void setup() {
   memset(rec_data, 0 , WAVE_SIZE * sizeof(int16_t));
   M5.Speaker.end();
   M5.Mic.begin();
-  avatar.addTask(lipsync, "lipsync", 1, 2048);
+  avatar.addTask(lipsync, "lipsync", 1, 2048, &lipsyncTaskHandle, APP_CPU_NUM);
 
 }
 
 void loop() {
+  // SpeakerとMicは排他利用のため、Speaker.tone()の前後でMic.end(), Speaker.begin()とMic.begin()を実行しています。
   M5.update();
   if (M5.BtnA.wasClicked()) {
     // アバターを変更します。
@@ -164,48 +165,43 @@ void loop() {
       avatar_count = 0;
     }
     Serial.printf("Avatar No:%d\n", avatar_count);
+    M5.Mic.end();
+    M5.Speaker.begin();
     M5.Speaker.tone(600, 100);
+    delay(100);
     avatar.changeAvatar(system_config.getAvatarYamlFilename(avatar_count).c_str());
+    M5.Speaker.end();
+    M5.Mic.begin();
   }
-
 
   if (M5.BtnB.wasClicked()) {
-    size_t v = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
-    v += 10;
-    if (v <= 255) {
-      M5.Speaker.setVolume(v);
-      M5.Speaker.setChannelVolume(m5spk_virtual_channel, v);
-      Serial.printf("Volume: %d\n", v);
-      Serial.printf("SystemVolume: %d\n", M5.Speaker.getVolume());
-      M5.Speaker.tone(1000, 100);
-    }
+    // ウィンクします。
+    M5.Mic.end();
+    M5.Speaker.begin();
+    M5.Speaker.tone(3000, 100);
+    delay(100);
+    M5.Speaker.end();
+    M5.Mic.begin();
+    avatar.leftWink(true);
+    avatar.setRotation(10.0f);
+    delay(1000);
+    avatar.leftWink(false);
+    avatar.setRotation(0.0f);
   }
 
-
-  if (M5.BtnC.pressedFor(2000)) {
+  if (M5.BtnC.wasClicked()) {
+    // 表情を切り替え
+    M5.Mic.end();
+    M5.Speaker.begin();
     M5.Speaker.tone(1000, 100);
     delay(500);
     M5.Speaker.tone(600, 100);
-    // 表情を切り替え
     expression++;
-    Serial.printf("ExpressionMax:%d\n", avatar.getExpressionMax());
     if (expression >= avatar.getExpressionMax()) {
       expression = 0;
     }
-    Serial.printf("----------Expression: %d----------\n", expression);
     avatar.setExpression(system_config.getAvatarYamlFilename(avatar_count).c_str(), expression);
-    Serial.printf("Resume\n");
+    M5.Speaker.end();
+    M5.Mic.begin();
   }
-  if (M5.BtnC.wasClicked()) {
-    size_t v = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
-    v -= 10;
-    if (v > 0) {
-      M5.Speaker.setVolume(v);
-      M5.Speaker.setChannelVolume(m5spk_virtual_channel, v);
-      Serial.printf("Volume: %d\n", v);
-      Serial.printf("SystemVolume: %d\n", M5.Speaker.getVolume());
-      M5.Speaker.tone(800, 100);
-    }
-  }
-  vTaskDelay(50);
 }
