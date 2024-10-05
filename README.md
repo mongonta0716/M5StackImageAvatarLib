@@ -1,5 +1,5 @@
-# M5Core2ImageAvatarLite
- ImageAvatarLite for M5Stack Core2 and M5Stack Fire
+# M5StackImageAvatarLite Library
+ ImageAvatarLite for M5Stack Core2, CoreS3 and Fire
 
 # 概要
 
@@ -32,7 +32,7 @@ main.cpp -> M5Core2ImageAvatarLite.ino
 
 # 対応機種
  メモリの都合上PSRAMが必要なので下記の3機種を対象にしています。
- 4bitBMPを使用し、カラーパレットを使用することにより他の機種でも動きますが手順が複雑なのでCore2及びFireのみとします。
+ 4bitBMPを使用し、カラーパレットを使用することにより他の機種でも動きますが手順が複雑なのでCore2, CoreS3及びFireのみとします。
 
 - M5Stack CoreS3
 - M5Stack Core2 / Core2 for AWS
@@ -60,6 +60,9 @@ ImageAvatarを表示するサンプルです。
     - クリック<br>アバターの表情切り替え
 
 ## Mic
+Micの音に合わせて、口パクと左右に傾きます。
+
+### ボタン操作
 - ボタンA
     - クリック<br>アバターの切り替え
 - ボタンB
@@ -74,6 +77,7 @@ dataフォルダ内にあるファイル及びフォルダをSDカードのル�
  
  1. - /bmp_slime/<br>BMPファイル(サンプルのbmp_slimeでは全部で11ファイル)
     - /bmp_puipui/<br>
+    - /bmp_phi/<br>
  1. /yaml/<br>
     - M5AvatarLiteSystem.yaml<br>一番最初に読み込まれる設定ファイル
     - M5AvatarLite00slime.yaml<br>slimeの設定ファイル
@@ -89,13 +93,14 @@ fs::FS bmp_fs  = SD; // BMPファイルの収納場所(SPIFFS or SD)
  [ESP32 with VS Code and PlatformIO: Upload Files to Filesystem (SPIFFS)](https://randomnerdtutorials.com/esp32-vs-code-platformio-spiffs/)
 
 # M5AvatarLiteSystem.yamlの内容
-一番最初に読み込まれる設定ファイルです。サンプルではAvatarは2つ定義してあります。（最大20）
+一番最初に読み込まれる設定ファイルです。サンプルではAvatarは3つ定義してあります。（最大20）
 ```
 ---
 lcd_brightness: 150                        // 液晶の明るさ(0〜255)
 avatar_yaml:                               // ImageAvatarのyamlファイルを記述(Max:20) 
 - "/yaml/M5AvatarLite00slime.yaml"
 - "/yaml/M5AvatarLite01puipui.yaml"
+- "/yaml/M5AvatarLite02phi.yaml"
 auto_power_off_time: "0"                   // 電源供給が止まると自動的にOFFにする時間(msec) 0だと無効です。
 // ---------- 以下はアプリで利用するパラメータです。----------
 volume: 200                                // ボリューム(0〜255)

@@ -1,0 +1,58 @@
+---
+expression: 
+- "normal"
+sprite_info: 
+  psram: "true"
+  color_depth: "16"
+  swap_bytes: "0"
+color_info: 
+  skin: "0xFF5B00"
+  eye_white: "0xFFFFFF"
+  transparent: "0x00FF00"
+  transparent2: "0x00FF00U"
+fixed_parts: 
+- parts: "body"
+  x: "0"
+  y: "0"
+  w: "320"
+  h: "240"
+  filename: "/bmp_phi/head.bmp"
+mouth: 
+-
+  normal: 
+    x: "160"
+    y: "130"
+    w: "84"
+    h: "88"
+    filename: 
+      open: "/bmp_phi/mouth_op_normal.bmp"
+      close: "/bmp_phi/mouth_cl_normal.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+eye: 
+-
+  normal: 
+    rx: "75"
+    ry: "120"
+    lx: "245"
+    ly: "120"
+    w: "94"
+    h: "84"
+    filename: 
+      open: "/bmp_phi/eye_op_normal.bmp"
+      close: "/bmp_phi/eye_cl_normal.bmp"
+    minScaleX: "1"
+    maxScaleX: "1"
+    minScaleY: "0.3"
+    maxScaleY: "1"
+    invert: "true"
+init_param: 
+-
+  normal: 
+    eye_l_ratio: "0"
+    eye_r_ratio: "0"
+    mouth_ratio: "0"
+    angle: "0"
+    breath: "0"
