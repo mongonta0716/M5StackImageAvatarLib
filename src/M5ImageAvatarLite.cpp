@@ -1,4 +1,5 @@
 #include "M5ImageAvatarLite.h"
+#include <math.h>
 
 namespace m5imageavatar {
 
@@ -26,8 +27,8 @@ void breath(void *args) {
     ImageAvatarLite *avatar = ctx->getAvatar();
     uint32_t c = 0;
     for(;;) {
-        c = c + 1 % 100;
-        float f = sin(c) * 2;
+        c = (c + 1) % 100;
+        float f = sinf(c * M_PI / 50) * 2;
         avatar->setBreath(f);
         vTaskDelay(1000/portTICK_PERIOD_MS);
     }
@@ -353,7 +354,6 @@ void ImageAvatarLite::setExpression(const char* filename, uint8_t expression) {
     initSprites(true);
     vTaskResume(drawTaskHandle);
     vTaskResume(blinkTaskHandle);
-    if (_expression == expression) return;
 }
 
 void ImageAvatarLite::setExpression(uint8_t expression) {
